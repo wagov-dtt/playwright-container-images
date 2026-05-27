@@ -1,0 +1,29 @@
+{
+	"name": "Drupal container images",
+	"image": "ghcr.io/wagov-dtt/devcontainer-base",
+	"mounts": [
+		"source=/var/run/docker.sock,target=/var/run/docker.sock,type=bind"
+	],
+	"onCreateCommand": "docker-init.sh && mise install",
+  "remoteEnv": {
+    "LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}",
+    "DOCKER_API_VERSION": "1.53"
+  },
+	"remoteUser": "vscode",
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-azuretools.vscode-containers",
+                "redhat.vscode-yaml"
+            ]
+        },
+        "jetbrains": {
+            "plugins": [
+                "com.github.xepozz.caddy",
+                "com.github.l34130.mise",
+                "org.mvnsearch.plugins.justPlugin",
+                "org.toml.lang"
+            ]
+        }
+    }
+}

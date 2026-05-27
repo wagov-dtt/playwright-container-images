@@ -1,0 +1,16 @@
+# IDEs data.
+.idea
+
+# Markdown tools.
+.obsidian
+
+# Application dir containing the app code the images are built for.
+app/*
+!app/.gitkeep
+
+# Local environment variables.
+.env
+.env.local
+
+# Test data.
+test/data

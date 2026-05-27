@@ -1,0 +1,12 @@
+repos:
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+  - repo: local
+    hooks:
+      - id: trivy
+        name: Trivy
+        entry: trivy repo --config trivy.yaml .
+        language: system
+        pass_filenames: false
