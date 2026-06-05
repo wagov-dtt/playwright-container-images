@@ -34,7 +34,7 @@ default:
 [group('local')]
 build repository=repository_default tag=tag_default env=local target=build_target_default push=false: (copy repository tag env)
     @echo "🔨 Building image..."
-    REPOSITORY={{ repository }} TAG={{ tag }} docker buildx bake {{ target }} \
+    REPOSITORY={{ repository }} TAG={{ kebabcase(tag) }} docker buildx bake {{ target }} \
         --pull \
         --progress=plain \
         --set="{{ target }}.context={{ app_dir }}/{{ repository }}/{{ code_dir }}" \
@@ -72,6 +72,7 @@ copy repository=repository_default tag=tag_default env=local:
 [group('internal')]
 copy-cicd repository=repository_default tag=tag_default:
     @echo "📋 Copying app code with: gh repo clone..."
+    @-rm --recursive --force -- "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}"
     gh repo clone {{ repository }} "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}" -- \
         --no-depth \
         --branch {{ tag }}
@@ -83,6 +84,7 @@ copy-cicd repository=repository_default tag=tag_default:
 [group('internal')]
 copy-local repository=repository_default tag=tag_default:
     @echo "📋 Copying app code with: git clone..."
+    @-rm --recursive --force -- "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}"
     git clone \
         --no-depth \
         --branch {{ tag }} \
@@ -95,8 +97,9 @@ copy-local repository=repository_default tag=tag_default:
 [group('internal')]
 copy-only-required repository=repository_default:
     @echo "🔍 Copying only required files & folders..."
-    mv "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}/{{ playwright }}.config.ts" "{{ app_dir }}/{{ repository }}/{{ code_dir }}"
-    mv "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}/tests/{{ playwright }}" "{{ app_dir }}/{{ repository }}/{{ code_dir }}/tests"
+    @-mkdir --parents "{{ app_dir }}/{{ repository }}/{{ code_dir }}/tests"
+    mv "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}/{{ playwright }}.config.ts" "{{ app_dir }}/{{ repository }}/{{ code_dir }}/"
+    mv "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}/tests/{{ playwright }}" "{{ app_dir }}/{{ repository }}/{{ code_dir }}/tests/"
     rm --recursive --force -- "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}"
 
 [arg("repository", long="repository")]
