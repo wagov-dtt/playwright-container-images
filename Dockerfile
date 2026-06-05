@@ -48,5 +48,8 @@ COPY --chown=www-data:www-data --from=playwright-code /app /app
 # Switch to non-root user for runtime
 USER www-data
 
+# Environment variables
+ENV BASE_URL='http://localhost'
+
 # Run Playwright tests with HTML reporter
 CMD ["pnpm", "exec", "playwright", "test", "--reporter=html"]
