@@ -1,0 +1,43 @@
+services:
+  drupal:
+    image: "${PLAYWRIGHT_IMAGE_NAME}:${PLAYWRIGHT_IMAGE_TAG}"
+    container_name: drupal
+    environment:
+      DB_HOST: drupal-mysql
+      DB_PORT: 3306
+      DB_DATABASE: drupal
+      DB_USERNAME: drupal
+      DB_PASSWORD: drupal
+      TRUSTED_HOST: ^localhost$|^127\.0\.0\.1$
+      DRUSH_OPTIONS_URI: http://localhost:3000
+    ports:
+      - "3000:8080"
+    volumes:
+      - ./data/files:/app/web/sites/default/files
+    restart: always
+    # Uncomment the volumes line and set to the local path of your Drupal
+    # installation, if you need to work with a local codebase.
+    # volumes:
+    #   - ~/Sites/drupal-container:/var/www/html:rw,delegated
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  mysql:
+    # See: https://hub.docker.com/_/mysql
+    image: mysql:8
+    container_name: drupal-mysql
+    environment:
+      MYSQL_RANDOM_ROOT_PASSWORD: 'yes'
+      MYSQL_DATABASE: drupal
+      MYSQL_USER: drupal
+      MYSQL_PASSWORD: drupal
+    healthcheck:
+      # The official image's entrypoint script includes healthcheck logic
+      # that can leverage MYSQL_USER and MYSQL_PASSWORD environment variables.
+      # The $$ escapes the $ for the container's shell.
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u$$MYSQL_USER", "-p$$MYSQL_PASSWORD" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s

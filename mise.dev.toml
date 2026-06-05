@@ -1,0 +1,5 @@
+[tools]
+gh = "latest"
+gitleaks = "latest"
+pre-commit = "latest"
+trivy = "latest"

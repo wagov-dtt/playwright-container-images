@@ -52,7 +52,7 @@ function "tags" {
 function "release_tags" {
   params = []
   result = compact([
-    "${IMAGE_NAME}:${TAG}"
+    "${IMAGE_NAME}-playwright:${TAG}"
   ])
 }
 
@@ -72,8 +72,6 @@ target "base" {
   context    = "."
   dockerfile = "Dockerfile"
   secret     = ["id=GITHUB_TOKEN,env=GITHUB_TOKEN"]
-  provenance = true
-  sbom       = true
 }
 
 # Local development - native platform only
@@ -96,12 +94,17 @@ target "release" {
   inherits   = ["base"]
   platforms  = [platform("amd64")]
   tags       = notequal(TAGS, "${REPOSITORY_NAME}:latest") ? tags(TAGS) : release_tags()
-  attestations = [
-    "type=provenance,mode=max",
-    "type=sbom"
+  # CRITICAL: Disable attestations that break AWS ECR.
+  provenance = false
+  sbom = false
+  # Disable the metadata attestations forcing the Image Index wrapper.
+  attest = [
+    "type=provenance,disabled=true",
+    "type=sbom,disabled=true"
   ]
+  # Force Docker V2 manifest format instead of OCI, required by AWS ECR.
+  output = ["type=image,oci-mediatypes=false"]
   cache-from = [
-    "type=gha,scope=amd64",
-    "type=gha,scope=arm64"
+    "type=gha,scope=amd64"
   ]
 }
