@@ -70,7 +70,7 @@ target "base" {
     "org.opencontainers.image.vendor" = "${REPOSITORY_NAMESPACE}"
   }
   context    = "."
-  dockerfile = "Dockerfile"
+  dockerfile = "code/Dockerfile"
   secret     = ["id=GITHUB_TOKEN,env=GITHUB_TOKEN"]
 }
 

@@ -1,5 +1,6 @@
 [tools]
 gh = "latest"
 gitleaks = "latest"
+pnpm = "11"
 pre-commit = "latest"
 trivy = "latest"

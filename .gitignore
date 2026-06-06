@@ -14,3 +14,10 @@ app/*
 
 # Test data.
 test/data
+
+# Ignore dependencies cache files.
+node_modules
+.pnpm-store
+
+# Ignore npm lock file, the pnpm lock file (pnpm-lock.yaml) is in use.
+package-lock.json

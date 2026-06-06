@@ -6,12 +6,18 @@
 # ===========================================
 FROM ghcr.io/pnpm/pnpm:11 AS base
 
+WORKDIR /app
+
 # Install the specified version of a node runtime globally
 # so the node binary is discoverable on PATH in subsequent layers and at runtime.
 RUN pnpm runtime set node 24 --global
 
-# Install Playwright using full SHA Hash for playwright@1.60
-RUN pnpm add --global @playwright/test#87bb9ddbd78f329df18c2b24847bc9409240cd07
+# Copy package.json required to install Playwright
+COPY config/package.json .
+COPY config/pnpm-lock.yaml .
+
+# Install Playwright defined in package.json
+RUN pnpm install --frozen-lockfile
 
 # Install browsers and dependencies
 RUN pnpm exec playwright install --with-deps
@@ -24,16 +30,16 @@ FROM base AS playwright-code
 WORKDIR /app
 
 # Copy Playwright config
-COPY playwright.config.ts ./
+COPY code/playwright.config.ts .
 
 # Create tests folder
 RUN mkdir /app/tests
 
+# Copy Playwright tests
+COPY code/tests/playwright tests/playwright
+
 # Ensure correct file permissions are set
 RUN chmod 750 /app/tests/playwright
-
-# Copy Playwright tests
-COPY tests/playwright /app/tests/playwright
 
 # ===========================================
 # Runtime stage - Final production image

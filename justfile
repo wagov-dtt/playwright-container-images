@@ -37,7 +37,7 @@ build repository=repository_default tag=tag_default env=local target=build_targe
     REPOSITORY={{ repository }} TAG={{ kebabcase(tag) }} docker buildx bake {{ target }} \
         --pull \
         --progress=plain \
-        --set="{{ target }}.context={{ app_dir }}/{{ repository }}/{{ code_dir }}" \
+        --set="{{ target }}.context={{ app_dir }}/{{ repository }}" \
         {{ if push != false { "--push" } else { "" } }}
 
 [arg("env", long="env")]
@@ -63,6 +63,9 @@ copy repository=repository_default tag=tag_default env=local:
             just copy-cicd --repository={{ repository }} --tag={{ tag }} || \
             just copy-local --repository={{ repository }} --tag={{ tag }} \
         )
+    @echo "📋 Copying package.json and pnpm-lock.yaml to app config..."
+    cp package.json {{ app_dir }}/{{ repository }}/{{ config_dir }}
+    cp pnpm-lock.yaml {{ app_dir }}/{{ repository }}/{{ config_dir }}
     @echo "📋 Copying Dockerfile to app code..."
     cp Dockerfile {{ app_dir }}/{{ repository }}/{{ code_dir }}
 
@@ -72,11 +75,9 @@ copy repository=repository_default tag=tag_default env=local:
 [group('internal')]
 copy-cicd repository=repository_default tag=tag_default:
     @echo "📋 Copying app code with: gh repo clone..."
-    @-rm --recursive --force -- "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}"
-    gh repo clone {{ repository }} "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}" -- \
+    gh repo clone {{ repository }} "{{ app_dir }}/{{ repository }}/{{ code_dir }}" -- \
         --no-depth \
         --branch {{ tag }}
-    just copy-only-required --repository={{ repository }}
 
 [arg("repository", long="repository")]
 [arg("tag", long="tag")]
@@ -84,23 +85,11 @@ copy-cicd repository=repository_default tag=tag_default:
 [group('internal')]
 copy-local repository=repository_default tag=tag_default:
     @echo "📋 Copying app code with: git clone..."
-    @-rm --recursive --force -- "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}"
     git clone \
         --no-depth \
         --branch {{ tag }} \
         git@github.com:{{ repository }}.git \
-        "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}"
-    just copy-only-required --repository={{ repository }}
-
-[arg("repository", long="repository")]
-[doc('Copy only required files & folders from tmp to code folder.')]
-[group('internal')]
-copy-only-required repository=repository_default:
-    @echo "🔍 Copying only required files & folders..."
-    @-mkdir --parents "{{ app_dir }}/{{ repository }}/{{ code_dir }}/tests"
-    mv "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}/{{ playwright }}.config.ts" "{{ app_dir }}/{{ repository }}/{{ code_dir }}/"
-    mv "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}/tests/{{ playwright }}" "{{ app_dir }}/{{ repository }}/{{ code_dir }}/tests/"
-    rm --recursive --force -- "{{ app_dir }}/{{ repository }}/{{ tmp_dir }}"
+        "{{ app_dir }}/{{ repository }}/{{ code_dir }}"
 
 [arg("repository", long="repository")]
 [arg("tag", long="tag")]
