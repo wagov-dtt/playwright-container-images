@@ -231,30 +231,13 @@ scan-image repository=repository_default tag=tag_default:
 [arg("repository", long="repository")]
 [arg("tag", long="tag")]
 [doc('Test Playwright container image.')]
-[group('CI/CD')]
 [group('local')]
 test repository=repository_default tag=tag_default: (docker-compose-up repository tag)
     @echo "☑️ Testing container image..."
 
-[arg("db", long="db")]
-[arg("repository", long="repository")]
-[arg("tag", long="tag")]
-[doc('Import DB.')]
-[group('CI/CD')]
-[group('local')]
-test-import-db repository=repository_default tag=tag_default db:  (docker-compose-up repository tag)
-    @echo "🗃️ Importing DB..."
-    just drush --repository={{ repository }} --tag={{ tag }} \
-        "sql-drop --yes"
-    just docker-compose-cli --repository={{ repository }} --tag={{ tag }} \
-        "$(just drush --repository={{ repository }} --tag={{ tag }} "sql:connect")" < {{ db }}
-    just drush --repository={{ repository }} --tag={{ tag }} \
-        "deploy --yes"
-
 [arg("repository", long="repository")]
 [arg("tag", long="tag")]
 [doc('Clean Testing artifacts.')]
-[group('CI/CD')]
 [group('local')]
 test-clean repository=repository_default tag=tag_default: (docker-compose-down repository tag)
     @echo "❌ Cleaning test artifacts..."
@@ -266,7 +249,7 @@ test-clean repository=repository_default tag=tag_default: (docker-compose-down r
 docker-compose-up repository=repository_default tag=tag_default:
     @echo "🏃‍♂️ Docker compose up..."
     PLAYWRIGHT_IMAGE_NAME="{{ repository }}-{{playwright}}" \
-        PLAYWRIGHT_IMAGE_TAG={{ tag }} \
+        PLAYWRIGHT_IMAGE_TAG={{ kebabcase(tag) }} \
         docker compose --file {{ docker_compose_file }} up --detach --wait
 
 [arg("repository", long="repository")]
@@ -276,7 +259,7 @@ docker-compose-up repository=repository_default tag=tag_default:
 docker-compose-down repository=repository_default tag=tag_default:
     @echo "🏃‍♂️ Docker compose down..."
     PLAYWRIGHT_IMAGE_NAME="{{ repository }}-{{playwright}}" \
-        PLAYWRIGHT_IMAGE_TAG={{ tag }} \
+        PLAYWRIGHT_IMAGE_TAG={{ kebabcase(tag) }} \
         docker compose --file {{ docker_compose_file }} down --remove-orphans --volumes > /dev/null 2>&1;
 
 [arg("repository", long="repository")]
@@ -286,7 +269,7 @@ docker-compose-down repository=repository_default tag=tag_default:
 docker-compose-cli repository=repository_default tag=tag_default +COMMAND='':
     @echo "🏃‍♂️ Docker compose cli..."
     PLAYWRIGHT_IMAGE_NAME={{ repository }}-{{playwright}}" \
-        PLAYWRIGHT_IMAGE_TAG={{ tag }} \
+        PLAYWRIGHT_IMAGE_TAG={{ kebabcase(tag) }} \
         docker compose --file {{ docker_compose_file }} exec --no-tty drupal bash -c "{{ COMMAND }}"
 
 [arg("repository", long="repository")]

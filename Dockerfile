@@ -34,12 +34,14 @@ COPY code/playwright.config.ts .
 
 # Create tests folder
 RUN mkdir /app/tests
+RUN mkdir /app/test-results
 
 # Copy Playwright tests
 COPY code/tests/playwright tests/playwright
 
 # Ensure correct file permissions are set
-RUN chmod 750 /app/tests/playwright
+RUN chmod 770 /app/tests
+RUN chmod 770 /app/tests/playwright
 
 # ===========================================
 # Runtime stage - Final production image
@@ -51,6 +53,9 @@ WORKDIR /app
 # Copy built application from build stage with appropriate ownership
 COPY --chown=www-data:www-data --from=playwright-code /app /app
 
+# Correct the /app folder ownership
+RUN chown www-data:www-data /app
+
 # Switch to non-root user for runtime
 USER www-data
 
@@ -59,3 +64,4 @@ ENV BASE_URL='http://localhost'
 
 # Run Playwright tests with HTML reporter
 CMD ["pnpm", "exec", "playwright", "test", "--reporter=html"]
+# CMD ["sleep", "infinity"]
