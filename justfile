@@ -97,10 +97,8 @@ copy-local repository=repository_default tag=tag_default:
 [group('local')]
 push-ecr repository=repository_default tag=tag_default: auth-ecr
     @echo "🚀 Publishing image to ECR..."
-    docker image tag {{ repository }}:{{ tag }} $SSO_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:{{ tag }}
-    docker image push $SSO_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:{{ tag }}
-    # @echo "Signing with cosign..."
-    # cosign sign --yes $SSO_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:{{ tag }}
+    docker image tag {{ repository }}:{{ kebabcase(tag) }} $SSO_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:{{ kebabcase(tag) }}
+    docker image push $SSO_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:{{ kebabcase(tag) }}
 
 [arg("repository", long="repository")]
 [arg("tag", long="tag")]
@@ -108,7 +106,7 @@ push-ecr repository=repository_default tag=tag_default: auth-ecr
 [group('local')]
 pull-ecr repository=repository_default tag=tag_default: auth-ecr
     @echo "⬇️ Pulling image from ECR..."
-    docker pull $SSO_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:{{ tag }}
+    docker pull $SSO_ACCOUNT.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:{{ kebabcase(tag) }}
 
 [doc('Authenticate Docker client to the Amazon ECR registry.')]
 [group('local')]
@@ -226,7 +224,7 @@ scan target=".":
 [arg("tag", long="tag")]
 scan-image repository=repository_default tag=tag_default:
     @echo "🛡️ Security scanning of container image..."
-    trivy image docker.io/{{ repository }}:{{ tag }}
+    trivy image "docker.io/{{ repository }}-{{playwright}}:{{ kebabcase(tag) }}"
 
 [arg("repository", long="repository")]
 [arg("tag", long="tag")]
@@ -261,32 +259,3 @@ docker-compose-down repository=repository_default tag=tag_default:
     PLAYWRIGHT_IMAGE_NAME="{{ repository }}-{{playwright}}" \
         PLAYWRIGHT_IMAGE_TAG={{ kebabcase(tag) }} \
         docker compose --file {{ docker_compose_file }} down --remove-orphans --volumes > /dev/null 2>&1;
-
-[arg("repository", long="repository")]
-[arg("tag", long="tag")]
-[doc('Docker composer cli.')]
-[private]
-docker-compose-cli repository=repository_default tag=tag_default +COMMAND='':
-    @echo "🏃‍♂️ Docker compose cli..."
-    PLAYWRIGHT_IMAGE_NAME={{ repository }}-{{playwright}}" \
-        PLAYWRIGHT_IMAGE_TAG={{ kebabcase(tag) }} \
-        docker compose --file {{ docker_compose_file }} exec --no-tty drupal bash -c "{{ COMMAND }}"
-
-[arg("repository", long="repository")]
-[arg("tag", long="tag")]
-[doc('Docker composer cli interactive.')]
-[private]
-docker-compose-cli-interactive repository=repository_default tag=tag_default:
-    @echo "🏃‍♂️ Docker compose cli interactive..."
-    DRUPAL_IMAGE_NAME={{ repository }}-{{playwright}}" \
-        DRUPAL_IMAGE_TAG={{ tag }} \
-        docker compose --file {{ docker_compose_file }} exec drupal bash
-
-[arg("repository", long="repository")]
-[arg("tag", long="tag")]
-[doc('Run drush command inside drupal container.')]
-[private]
-drush repository=repository_default tag=tag_default +COMMAND='':
-    @echo "🏃‍♂️ Running drush command..."
-    just docker-compose-cli --repository={{ repository }} --tag={{ tag }} \
-        "drush {{ COMMAND }}"
