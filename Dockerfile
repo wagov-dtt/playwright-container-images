@@ -33,8 +33,8 @@ WORKDIR /app
 COPY code/playwright.config.ts .
 
 # Create tests folder
-RUN mkdir /app/tests
-RUN mkdir /app/test-results
+# RUN mkdir /app/tests
+# RUN mkdir /app/test-results
 
 # Copy Playwright tests
 COPY code/tests/playwright tests/playwright
@@ -50,14 +50,15 @@ FROM base AS runtime
 
 WORKDIR /app
 
-# Copy built application from build stage with appropriate ownership
-COPY --chown=www-data:www-data --from=playwright-code /app /app
+# Copy built application from playwright-code stage with appropriate ownership
+# COPY --chown=www-data:www-data --from=playwright-code /app /app
+COPY  --from=playwright-code /app /app
 
 # Correct the /app folder ownership
-RUN chown www-data:www-data /app
+# RUN chown www-data:www-data /app
 
 # Switch to non-root user for runtime
-USER www-data
+# USER www-data
 
 # Environment variables
 ENV BASE_URL='http://localhost'

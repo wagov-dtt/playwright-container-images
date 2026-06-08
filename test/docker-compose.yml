@@ -1,6 +1,7 @@
+name: playwright-container-images-test
 services:
   playwright:
     image: "${PLAYWRIGHT_IMAGE_NAME}:${PLAYWRIGHT_IMAGE_TAG}"
     container_name: playwright
     environment:
-      BASE_URL: https://jobswa-drupal-app.ddev.site
+      BASE_URL: https://www.jobs.wa.gov.au/
