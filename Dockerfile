@@ -8,6 +8,10 @@ FROM ghcr.io/pnpm/pnpm:11 AS base
 
 WORKDIR /app
 
+# Use hermetic install to place browsers binaries to node_modules/playwright-core/.local-browsers
+# @see https://playwright.dev/docs/browsers#hermetic-install
+ENV PLAYWRIGHT_BROWSERS_PATH=0
+
 # Install the specified version of a node runtime globally
 # so the node binary is discoverable on PATH in subsequent layers and at runtime.
 RUN pnpm runtime set node 24 --global
@@ -32,10 +36,6 @@ WORKDIR /app
 # Copy Playwright config
 COPY code/playwright.config.ts .
 
-# Create tests folder
-# RUN mkdir /app/tests
-# RUN mkdir /app/test-results
-
 # Copy Playwright tests
 COPY code/tests/playwright tests/playwright
 
@@ -51,18 +51,16 @@ FROM base AS runtime
 WORKDIR /app
 
 # Copy built application from playwright-code stage with appropriate ownership
-# COPY --chown=www-data:www-data --from=playwright-code /app /app
-COPY  --from=playwright-code /app /app
+COPY --chown=www-data:www-data --from=playwright-code /app /app
 
 # Correct the /app folder ownership
-# RUN chown www-data:www-data /app
+RUN chown www-data:www-data /app
 
 # Switch to non-root user for runtime
-# USER www-data
+USER www-data
 
 # Environment variables
 ENV BASE_URL='http://localhost'
 
 # Run Playwright tests with HTML reporter
 CMD ["pnpm", "exec", "playwright", "test", "--reporter=html"]
-# CMD ["sleep", "infinity"]
