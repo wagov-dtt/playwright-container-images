@@ -187,9 +187,6 @@ clean:
 validate:
     @echo "🔍 Validate justfile..."
     just --fmt --check --unstable
-    @echo "🔍 Validate Caddyfile..."
-    @echo "Run \`caddy fmt --help\` to understand the validation output and options."
-    caddy fmt --diff conf/Caddyfile
     @echo "🔍 Validate mise..."
     mise doctor
     @echo "Run manually pre-commit hooks on all files."
@@ -224,7 +221,7 @@ scan target=".":
 [arg("tag", long="tag")]
 scan-image repository=repository_default tag=tag_default:
     @echo "🛡️ Security scanning of container image..."
-    trivy image "docker.io/{{ repository }}-{{playwright}}:{{ kebabcase(tag) }}"
+    trivy image "docker.io/{{ repository }}-{{ playwright }}:{{ kebabcase(tag) }}"
 
 [arg("repository", long="repository")]
 [arg("tag", long="tag")]
@@ -246,7 +243,7 @@ test-clean repository=repository_default tag=tag_default: (docker-compose-down r
 [private]
 docker-compose-up repository=repository_default tag=tag_default:
     @echo "🏃‍♂️ Docker compose up..."
-    PLAYWRIGHT_IMAGE_NAME="{{ repository }}-{{playwright}}" \
+    PLAYWRIGHT_IMAGE_NAME="{{ repository }}-{{ playwright }}" \
         PLAYWRIGHT_IMAGE_TAG={{ kebabcase(tag) }} \
         docker compose --file {{ docker_compose_file }} up --detach --wait
 
@@ -256,6 +253,6 @@ docker-compose-up repository=repository_default tag=tag_default:
 [private]
 docker-compose-down repository=repository_default tag=tag_default:
     @echo "🏃‍♂️ Docker compose down..."
-    PLAYWRIGHT_IMAGE_NAME="{{ repository }}-{{playwright}}" \
+    PLAYWRIGHT_IMAGE_NAME="{{ repository }}-{{ playwright }}" \
         PLAYWRIGHT_IMAGE_TAG={{ kebabcase(tag) }} \
         docker compose --file {{ docker_compose_file }} down --remove-orphans --volumes > /dev/null 2>&1;
