@@ -63,5 +63,9 @@ USER www-data
 ENV CI=true \
     BASE_URL='http://localhost'
 
+# Basic healthcheck on Playwright command line
+HEALTHCHECK --start-period=20s --interval=30s --timeout=5s --retries=3 \
+    CMD pnpm exec playwright --version || exit 1
+
 # Run Playwright tests with HTML reporter
 CMD ["pnpm", "exec", "playwright", "test", "--reporter=html"]

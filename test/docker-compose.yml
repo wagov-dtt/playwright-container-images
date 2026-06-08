@@ -5,3 +5,10 @@ services:
     container_name: playwright
     environment:
       BASE_URL: https://www.jobs.wa.gov.au/
+    healthcheck:
+      test: [ "CMD", "pnpm", "exec", "playwright", "--version"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
