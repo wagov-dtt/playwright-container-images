@@ -60,7 +60,8 @@ RUN chown www-data:www-data /app
 USER www-data
 
 # Environment variables
-ENV BASE_URL='http://localhost'
+ENV CI=true \
+    BASE_URL='http://localhost'
 
 # Run Playwright tests with HTML reporter
 CMD ["pnpm", "exec", "playwright", "test", "--reporter=html"]
