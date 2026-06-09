@@ -1,4 +1,23 @@
 {
+  "name": "playwright-container-images",
+  "version": "0.1.0",
+  "description": "Build process for production-ready Playwright container images.",
+  "license": "Apache-2.0",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wagov-dtt/playwright-container-images.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wagov-dtt/playwright-container-images/issues"
+  },
+  "homepage": "https://github.com/wagov-dtt/playwright-container-images#readme",
+  "keywords": [
+    "container",
+    "docker",
+    "playwright",
+    "testing"
+  ],
   "engines": {
     "node": ">=24",
     "pnpm": ">=11"

@@ -1,6 +1,6 @@
 # Playwright Container Images
 
-Building process for **production-ready** [Playwright](https://playwright.dev/) container images to run Playwright tests. 
+Building process for **production-ready** [Playwright](https://playwright.dev/) container images to run Playwright tests.
 
 For development/contributing to this repository, see [CONTRIBUTING.md](./CONTRIBUTING.md).
 
@@ -48,7 +48,7 @@ To scan the built container image with [Trivy](https://trivy.dev/) (security sca
 
 Examples:
 
-- `just scan-image --repository="some/drupal-application" --tag="v1.0.0"
+- `just scan-image --repository="some/drupal-application" --tag="v1.0.0"`
 - `trivy image docker.io/some/drupal-application:v1.0.0`
 
 The repository contains **Trivy config file**: `trivy.yaml` that is automatically picked up by the `trivy` command mentioned above (when run from root folder of this repository). The configuration includes instructions like `ignore-unfixed: true` (show only vulnerabilities with fixes available).
@@ -71,7 +71,7 @@ just test myorg/myapp main
 
 ## Security
 
-See [ISSUES.md](./ISSUES.md) for security checklist before production deployment.
+See [SECURITY.md](./SECURITY.md) for vulnerability reporting guidance.
 
 ## License
 
