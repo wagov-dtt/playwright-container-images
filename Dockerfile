@@ -68,4 +68,4 @@ HEALTHCHECK --start-period=20s --interval=30s --timeout=5s --retries=3 \
     CMD pnpm exec playwright --version || exit 1
 
 # Run Playwright tests with HTML reporter
-CMD ["pnpm", "exec", "playwright", "test", "--reporter=html"]
+CMD ["pnpm", "exec", "playwright", "test", "--project=website-user-tests", "--reporter=html,list"]
