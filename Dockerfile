@@ -76,9 +76,8 @@ FROM pnpm AS playwright
 
 WORKDIR /app
 
-# Use hermetic install to place browsers binaries to node_modules/playwright-core/.local-browsers
-# @see https://playwright.dev/docs/browsers#hermetic-install
-ENV PLAYWRIGHT_BROWSERS_PATH=0
+# Set a global path for Playwright browsers
+ENV PLAYWRIGHT_BROWSERS_PATH=/opt/playwright-browsers
 
 # Copy package.json required to install Playwright
 COPY config/package.json .
@@ -89,6 +88,10 @@ RUN pnpm install --frozen-lockfile
 
 # Install browsers and dependencies
 RUN pnpm exec playwright install --with-deps
+
+# Grant permissions to Playwright browsers binaries
+# Switching to a non-root user later on
+RUN chmod -R 755 /opt/playwright-browsers
 
 # ===========================================
 # Playwright - Config & tests stage
