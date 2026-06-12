@@ -18,10 +18,7 @@
     "playwright",
     "testing"
   ],
-  "engines": {
-    "node": ">=24",
-    "pnpm": ">=11"
-  },
+  "packageManager": "pnpm@11.6.0",
   "dependencies": {
     "@playwright/test": "^1.60.0",
     "@types/node": "^25.9.3"

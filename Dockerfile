@@ -2,9 +2,9 @@
 # Playwright container image using pnpm on debian:stable-slim
 
 # ===========================================
-# Base stage - debian:stable
+# Base stage - node:24.16.0-trixie
 # ===========================================
-FROM debian:stable AS base
+FROM node:24.16.0-trixie AS base
 
 # Patch OS and install common packages
 # The following package are required by pnpm: curl, libatomic1
@@ -34,6 +34,10 @@ WORKDIR /app
 ENV PNPM_HOME="/root/.local/share/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
+RUN corepack enable pnpm
+# RUN corepack use pnpm@11.6.0
+# RUN corepack install
+
 # Explicitly define the shell for pnpm to prevent inference errors
 # Required by pnpm installation
 # ENV SHELL="/bin/sh"
@@ -45,19 +49,19 @@ ENV PATH="$PNPM_HOME:$PATH"
 # ENV PATH="$PNPM_HOME:$PATH"
 
 # Install pnpm
-RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" PNPM_VERSION=11.6.0 sh -
+# RUN wget -qO- https://get.pnpm.io/install.sh | ENV="$HOME/.shrc" SHELL="$(which sh)" PNPM_VERSION=11.6.0 sh -
 # RUN curl -fsSL https://get.pnpm.io/install.sh | env PNPM_VERSION=11.6.0 sh -
 
-RUN . "/$HOME/.shrc"
+# RUN . "/$HOME/.shrc"
 
-RUN echo "$PATH"
+# RUN echo "$PATH"
 
 # Start using pnpm
 # RUN source /root/.bashrc
 
 # Install the specified version of a node runtime globally
 # Making the node binary discoverable on PATH in subsequent layers and at runtime
-RUN pnpm runtime set node 24 --global
+# RUN pnpm runtime set node 24 --global
 
 # ===========================================
 # Playwright - installation
