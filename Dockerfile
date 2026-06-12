@@ -34,6 +34,12 @@ WORKDIR /app
 ENV PNPM_HOME="/root/.local/share/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
+# Prevent Corepack from prompting for network downloads
+ENV COREPACK_ENABLE_DOWNLOAD_PROMPT=0
+
+# Redirect Corepack to a writeable directory to avoid permission/read-only errors
+ENV COREPACK_HOME="/tmp/corepack"
+
 RUN corepack enable pnpm
 # RUN corepack use pnpm@11.6.0
 # RUN corepack install
