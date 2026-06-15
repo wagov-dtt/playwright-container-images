@@ -5,6 +5,8 @@ services:
     container_name: playwright
     environment:
       BASE_URL: https://www.jobs.wa.gov.au/
+      ENV_NAME: test-environment
+    command: ["test", "--project=website-user-tests", "--reporter=html,list"]
     healthcheck:
       test: [ "CMD", "pnpm", "exec", "playwright", "--version"]
       interval: 10s

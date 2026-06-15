@@ -56,12 +56,6 @@ ENV PLAYWRIGHT_BROWSERS_PATH=/opt/playwright-browsers
 COPY config/package.json .
 COPY config/pnpm-lock.yaml .
 
-# Copy entrypoint.sh required for running playwright in runtime
-COPY config/entrypoint.sh .
-
-# Ensure correct file permissions are set
-RUN chmod +x /app/entrypoint.sh
-
 # Install Playwright defined in package.json
 RUN pnpm install --frozen-lockfile
 
@@ -73,7 +67,7 @@ RUN pnpm exec playwright install --with-deps
 RUN chmod -R 755 /opt/playwright-browsers
 
 # ===========================================
-# Playwright - Config & tests stage
+# Playwright - config & tests stage
 # ===========================================
 FROM playwright AS playwright-code
 
@@ -90,9 +84,22 @@ RUN chmod 770 /app/tests
 RUN chmod 770 /app/tests/playwright
 
 # ===========================================
+# Entrypoint - set command entrypoint
+# ===========================================
+FROM playwright-code AS entrypoint-included
+
+WORKDIR /app
+
+# Copy entrypoint.sh required for running playwright in runtime
+COPY config/entrypoint.sh .
+
+# Ensure correct file permissions are set
+RUN chmod +x /app/entrypoint.sh
+
+# ===========================================
 # Runtime stage - final production image
 # ===========================================
-FROM playwright AS runtime
+FROM entrypoint-included AS runtime
 
 WORKDIR /app
 
