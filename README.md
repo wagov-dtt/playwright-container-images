@@ -37,6 +37,14 @@ just build --repository="wagov-dtt/myapp" --tag="v1.0.0"
 | `just clean`              | Remove build artifacts and images    |
 | `just --list`             | Show all available commands          |
 
+## Usage
+
+The standard command we want to run at this stage is:
+
+```bash
+playwright test --project=website-user-tests --reporter=html,list
+```
+
 ## Actions
 
 ### Scan container image for vulnerabilities

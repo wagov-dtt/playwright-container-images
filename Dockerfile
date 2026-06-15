@@ -13,10 +13,18 @@ RUN rm -f /etc/apt/apt.conf.d/docker-clean && \
         git \
         zip \
         unzip \
+        curl \
         ca-certificates \
+        wget \
     && apt-get upgrade -yq \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Install AWS CLI v2 - required by entrypoint.sh to upload reports to S3
+RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" \
+    && unzip awscliv2.zip \
+    && ./aws/install \
+    && rm -rf awscliv2.zip aws
 
 # ===========================================
 # Pnpm - installation
@@ -47,6 +55,12 @@ ENV PLAYWRIGHT_BROWSERS_PATH=/opt/playwright-browsers
 # Copy package.json required to install Playwright
 COPY config/package.json .
 COPY config/pnpm-lock.yaml .
+
+# Copy entrypoint.sh required for running playwright in runtime
+COPY config/entrypoint.sh .
+
+# Ensure correct file permissions are set
+RUN chmod +x /app/entrypoint.sh
 
 # Install Playwright defined in package.json
 RUN pnpm install --frozen-lockfile
@@ -99,5 +113,4 @@ ENV CI=true \
 HEALTHCHECK --start-period=20s --interval=30s --timeout=5s --retries=3 \
     CMD pnpm exec playwright --version || exit 1
 
-# Run Playwright tests with HTML reporter
-CMD ["pnpm", "exec", "playwright", "test", "--project=website-user-tests", "--reporter=html,list"]
+ENTRYPOINT ["/app/entrypoint.sh"]

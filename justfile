@@ -66,6 +66,8 @@ copy repository=repository_default tag=tag_default env=local:
     @echo "📋 Copying package.json and pnpm-lock.yaml to app config..."
     cp package.json {{ app_dir }}/{{ repository }}/{{ config_dir }}
     cp pnpm-lock.yaml {{ app_dir }}/{{ repository }}/{{ config_dir }}
+    @echo "📋 Copying entrypoint.sh to app config..."
+    cp entrypoint.sh {{ app_dir }}/{{ repository }}/{{ config_dir }}
     @echo "📋 Copying Dockerfile to app code..."
     cp Dockerfile {{ app_dir }}/{{ repository }}/{{ code_dir }}
 
