@@ -9,7 +9,7 @@ if [ -n "${TEST_TAGS:-}" ]; then
     PLAYWRIGHT_ARGS+=("--grep" "$GREP_PATTERN")
 fi
 
-pnpm exec playwright test "${PLAYWRIGHT_ARGS[@]}" || TEST_EXIT_CODE=$?
+pnpm exec playwright test --reporter=html,list "${PLAYWRIGHT_ARGS[@]}" || TEST_EXIT_CODE=$?
 
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 S3_PREFIX="reports/${ENV_NAME}/${TIMESTAMP}"
