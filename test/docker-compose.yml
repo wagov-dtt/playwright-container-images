@@ -5,7 +5,7 @@ services:
     container_name: playwright
     environment:
       BASE_URL: https://www.jobs.wa.gov.au/
-      TEST_TAGS: website-user-tests
+      TEST_TAGS: "@smoke"
       ENV_NAME: test-environment
       REPORTS_BUCKET: test-reports-bucket
     healthcheck:
