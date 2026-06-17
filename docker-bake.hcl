@@ -104,7 +104,7 @@ target "release" {
   ]
   # Force Docker V2 manifest format instead of OCI, required by AWS ECR.
   output = ["type=image,oci-mediatypes=false"]
-  cache-from = [
-    "type=gha,scope=amd64"
-  ]
+  # Cache configuration as advised in: https://docs.docker.com/build/ci/github-actions/cache/#github-cache
+  cache-from = ["type=gha"]
+  cache-to = ["type=gha,mode=max"]
 }
