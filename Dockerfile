@@ -114,7 +114,8 @@ USER www-data
 
 # Environment variables
 ENV CI=true \
-    BASE_URL='http://localhost'
+    BASE_URL='http://localhost' \
+    PW_WORKERS=6
 
 # Basic healthcheck on Playwright command line
 HEALTHCHECK --start-period=20s --interval=30s --timeout=5s --retries=3 \

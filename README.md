@@ -65,12 +65,13 @@ The repository contains **Trivy config file**: `trivy.yaml` that is automaticall
 
 ### Environment Variables
 
-| Variable    | Default            | Description                                                   |
-| ----------- | ------------------ | ------------------------------------------------------------- |
-| `CI`        | `true`             | CI environment indication (used by Playwright configuration). |
-| `BASE_URL`  | `http://localhost` | URL of the website to be tested.                              |
-| `TEST_TAGS` |                    | Tests tagged by usage of `playwright test --grep $TEST_TAGS`  |
-| `ENV_NAME`  |                    | Environment name for S3 storage of test report.               |
+| Variable     | Default            | Description                                                                                         |
+| ------------ | ------------------ | --------------------------------------------------------------------------------------------------- |
+| `CI`         | `true`             | CI environment indication (used by Playwright configuration).                                       |
+| `BASE_URL`   | `http://localhost` | URL of the website to be tested.                                                                    |
+| `PW_WORKERS` | 6                  | The maximum number of concurrent worker processes to use for parallelizing tests (when CI enabled). |
+| `TEST_TAGS`  | `undefined`        | Tests tagged by usage of `playwright test --grep $TEST_TAGS`                                        |
+| `ENV_NAME`   | `undefined`        | Environment name for S3 storage of test report.                                                     |
 
 ## Testing Locally
 

@@ -93,7 +93,7 @@ target "build-test" {
 # CI release - multi-platform with cache from native builds
 target "release" {
   inherits   = ["base"]
-  platforms  = [platform("amd64")]
+  platforms  = [platform(ARCH)]
   tags       = notequal(TAGS, "${REPOSITORY_NAME}:latest") ? tags(TAGS) : release_tags()
   # CRITICAL: Disable attestations that break AWS ECR.
   provenance = false
