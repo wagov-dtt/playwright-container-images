@@ -14,6 +14,9 @@ pnpm exec playwright test "${PLAYWRIGHT_ARGS[@]}" || TEST_EXIT_CODE=$?
 TIMESTAMP=$(date +%Y%m%d-%H%M%S)
 S3_PREFIX="reports/${ENV_NAME}/${TIMESTAMP}"
 
+echo "{\"tags\": \"${TEST_TAGS:-}\"}" > meta.json
+
+aws s3 cp meta.json "s3://${REPORTS_BUCKET}/${S3_PREFIX}/meta.json" || true
 aws s3 cp playwright-report/ "s3://${REPORTS_BUCKET}/${S3_PREFIX}/html/" --recursive || true
 aws s3 cp results.xml "s3://${REPORTS_BUCKET}/${S3_PREFIX}/results.xml" || true
 
