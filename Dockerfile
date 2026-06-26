@@ -109,6 +109,13 @@ COPY --chown=www-data:www-data --from=playwright-code /app /app
 # Correct the /app folder ownership
 RUN chown www-data:www-data /app
 
+# Create home directory for www-data user
+RUN mkdir --parents /var/www
+RUN chown www-data:www-data /var/www
+
+# Set directory for user-specific non-essential (cached) data
+ENV XDG_CACHE_HOME=/var/www/.cache
+
 # Switch to non-root user for runtime
 USER www-data
 
